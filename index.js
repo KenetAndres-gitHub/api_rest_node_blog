@@ -38,7 +38,7 @@ app.use(cors());
 app.use(express.json()); //recibir datos con content-type application/json
 app.use(express.urlencoded({extended: true})); //recibir datos con content-type application/x-www-form-urlencoded
 //Rutas
-const rutas_article = require('./routes/Article');
+const rutas_article = require('./routes/article');
 
 //Cargo las rutas
 app.use('/api', rutas_article);
