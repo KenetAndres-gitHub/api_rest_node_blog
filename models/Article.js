@@ -1,5 +1,6 @@
 const {Sequelize, DataTypes} = require('sequelize');
-const sequelize = require('../index'); // Importar Sequelize desde index.js
+const sequelize = require('../database/sequelize'); // Importar Sequelize desde un archivo separado
+
 
 const Article = sequelize.define('article', {
     id:{
@@ -10,12 +11,10 @@ const Article = sequelize.define('article', {
     title: {
         type: DataTypes.STRING,
         allowNull: false,
-        required: true
     },
     content: {
         type: DataTypes.TEXT,
         allowNull: false,
-        required: true
     },
     date: {
         type: DataTypes.DATE,

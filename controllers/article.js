@@ -6,7 +6,7 @@ const prueba = (req , res) => {
     });
 }
 
-const add = (req, res) => {
+const add = async (req, res) => {
     // Recibir los datos por POST
     let parametros = req.body; 
 
@@ -30,20 +30,23 @@ const add = (req, res) => {
    
 
     // Guardar en la base de datos
-    article.save((error, articleStored) => {
-        if(error || !articleStored){
-            return res.status(400).json({
-                status: 'error',
-                message: 'El artículo no se ha guardado'
-            });
-        }
+    try {
+        // Crear el objeto a guardar
+        let article = await Article.create(parametros);
+
         // Devolver una respuesta
         return res.status(200).json({
             status: 'success',
-            article: articleStored,
+            article: article,
             message: 'El artículo se ha guardado correctamente'
         });
-    });
+    } catch (error) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'El artículo no se ha guardado',
+            error: error.message
+        });
+    }
    
 }
 module.exports = {
