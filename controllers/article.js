@@ -47,10 +47,18 @@ const add = async (req, res) => {
 
 const getAll = async (req, res) => {
     try {
-        let articles = await Article.findAll();
+        let articles = await Article.findAll({
+            order: [['createdAt', 'DESC']]
+        });
+        
+        if(req.params.ultimos){
+           articles = articles.slice(0, parseInt(req.params.ultimos));//obtener los ultimos articulos
+        }
+
         return res.status(200).json({
             status: 'success',
-            articles: articles
+            articles: articles,
+            parametro: req.params.ultimos
         });
     } catch (error) {
         return res.status(400).json({
