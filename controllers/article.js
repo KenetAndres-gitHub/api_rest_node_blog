@@ -52,7 +52,7 @@ const getAll = async (req, res) => {
         });
         
         if(req.params.ultimos){
-           articles = articles.slice(0, parseInt(req.params.ultimos));//obtener los ultimos articulos
+           articles = articles.slice(0, parseInt(req.params.ultimos));//obtener los N ultimos articulos
         }
 
         return res.status(200).json({
