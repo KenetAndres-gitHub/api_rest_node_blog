@@ -24,11 +24,7 @@ const add = async (req, res) => {
             status: 'error',
             message: 'Faltan datos por enviar',
         });
-    }
-    // Crear el objeto a guardar
-    let article = new Article(parametros);
-   
-
+    }   
     // Guardar en la base de datos
     try {
         // Crear el objeto a guardar
@@ -47,9 +43,27 @@ const add = async (req, res) => {
             error: error.message
         });
     }
-   
 }
+
+const getAll = async (req, res) => {
+    try {
+        let articles = await Article.findAll();
+        return res.status(200).json({
+            status: 'success',
+            articles: articles
+        });
+    } catch (error) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'No se han podido obtener los artículos',
+            error: error.message
+        });
+    }
+}
+
+
 module.exports = {
     prueba,
-    add
+    add,
+    getAll
 }

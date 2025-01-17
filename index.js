@@ -3,7 +3,7 @@ const express = require('express');
 // CORS es un mecanismo que permite que recursos restringidos en una página web sean solicitados desde otro dominio fuera del dominio desde el cual se sirvió el recurso.
 const cors = require('cors');
 
-const sequelize = require('./database/sequelize'); // Importar Sequelize desde el archivo separado
+//const sequelize = require('./database/sequelize'); // Importar Sequelize desde el archivo separado
 
 //Crear servidor Node con Express
 const app = express();
