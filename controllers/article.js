@@ -69,9 +69,31 @@ const getAll = async (req, res) => {
     }
 }
 
+const getUno = async (req, res) => {
+    try {
+        let article = await Article.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+
+        return res.status(200).json({
+            status: 'success',
+            article: article
+        });
+    } catch (error) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'No se ha podido obtener el artículo',
+            error: error.message
+        });
+    }
+}
+
 
 module.exports = {
     prueba,
     add,
-    getAll
+    getAll,
+    getUno
 }
