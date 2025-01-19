@@ -69,7 +69,7 @@ const getAll = async (req, res) => {
     }
 }
 
-const getUno = async (req, res) => {
+const uno = async (req, res) => {
     try {
         let article = await Article.findOne({
             where: {
@@ -90,10 +90,85 @@ const getUno = async (req, res) => {
     }
 }
 
+const borrar = async (req, res) => {
+    try {
+        let article = await Article.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        let articleDeleted = article;
+        await article.destroy();
+
+        return res.status(200).json({
+            status: 'success',
+            article: articleDeleted,
+            message: 'El artículo se ha borrado correctamente'
+        });
+    } catch (error) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'No se ha podido borrar el artículo',
+            error: error.message
+        });
+    }
+}
+
+const update = async (req, res) => {
+    // Recibir los datos por POST
+    let parametros = req.body; 
+
+    // Validar los datos
+    try{
+        let validar_titulo = !validator.isEmpty(parametros.title) && validator.isLength(parametros.title, {min: 5, max: undefined});
+        let validar_contenido = !validator.isEmpty(parametros.content);
+        if(!validar_titulo || !validar_contenido){
+           throw new Error('No se han enviado los datos correctamente');
+        }
+
+    }catch(err){
+        return res.status(400).json({
+            status: 'error',
+            message: 'Faltan datos por enviar',
+        });
+    }   
+    // Guardar en la base de datos
+    try {
+        // Crear el objeto a guardar
+        let article = await Article.update({
+            title: parametros.title,
+            content: parametros.content,
+            image: parametros.image
+        }, {
+            where: {
+            id: req.params.id
+            },
+            returning: true,
+            plain: true
+        });
+
+        article = article[1]; // Obtener el artículo actualizado
+
+        // Devolver una respuesta
+        return res.status(200).json({
+            status: 'success',
+            article: article,
+            message: 'El artículo se ha actualizado correctamente'
+        });
+    } catch (error) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'El artículo no se ha actualizado',
+            error: error.message
+        });
+    }
+}
 
 module.exports = {
     prueba,
     add,
     getAll,
-    getUno
+    uno,
+    borrar,
+    update
 }
