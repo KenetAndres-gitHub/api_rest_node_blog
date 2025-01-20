@@ -35,3 +35,7 @@ dist
 **/tmp
 **/temp
 *.swp
+
+
+#Credenciales DOTENV
+.env

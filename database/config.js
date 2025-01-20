@@ -1,9 +1,11 @@
+require('dotenv').config(); // Importar la configuración de las variables de entorno
+
 module.exports = {
     "development": {
-      "username": "postgres",
-      "password": "kenbokCh2969",
-      "database": "api_node_blog",
-      "host": "127.0.0.1",
+      "username": process.env.DB_USER,
+      "password": process.env.DB_PASS,
+      "database": process.env.DB_NAME,
+      "host": process.env.DB_HOST,
       "dialect": "postgres"
     }
 };
