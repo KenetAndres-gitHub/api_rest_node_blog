@@ -1,10 +1,5 @@
-const validator = require('validator');
+const { validaDatos } = require('../helpers/validar');
 const Article = require('../models/Article');
-const prueba = (req , res) => {
-    return res.status(200).json({
-        message: 'Soy una acción de prueba en el controlador de Article'
-    });
-}
 
 const add = async (req, res) => {
     // Recibir los datos por POST
@@ -12,13 +7,7 @@ const add = async (req, res) => {
 
     // Validar los datos
     try{
-        let validar_titulo = !validator.isEmpty(parametros.title) && validator.isLength(parametros.title, {min: 5, max: undefined});
-        let validar_contenido = !validator.isEmpty(parametros.content);
-        //let validar_imagen = !validator.isEmpty(image);
-        if(!validar_titulo || !validar_contenido){
-           throw new Error('No se han enviado los datos correctamente');
-        }
-
+        validaDatos(parametros);
     }catch(err){
         return res.status(400).json({
             status: 'error',
@@ -117,31 +106,25 @@ const borrar = async (req, res) => {
 const update = async (req, res) => {
     // Recibir los datos por POST
     let parametros = req.body; 
-
     // Validar los datos
     try{
-        let validar_titulo = !validator.isEmpty(parametros.title) && validator.isLength(parametros.title, {min: 5, max: undefined});
-        let validar_contenido = !validator.isEmpty(parametros.content);
-        if(!validar_titulo || !validar_contenido){
-           throw new Error('No se han enviado los datos correctamente');
-        }
-
+        validaDatos(parametros);
     }catch(err){
         return res.status(400).json({
             status: 'error',
             message: 'Faltan datos por enviar',
         });
     }   
+    let {title, content, image} = parametros; // Desestructurar los datos
+    
     // Guardar en la base de datos
     try {
         // Crear el objeto a guardar
         let article = await Article.update({
-            title: parametros.title,
-            content: parametros.content,
-            image: parametros.image
+            title: title, content: content, image: image
         }, {
             where: {
-            id: req.params.id
+                id: req.params.id
             },
             returning: true,
             plain: true
@@ -164,8 +147,8 @@ const update = async (req, res) => {
     }
 }
 
+
 module.exports = {
-    prueba,
     add,
     getAll,
     uno,
