@@ -1,3 +1,4 @@
+const fs = require('fs');
 const { validaDatos } = require('../helpers/validar');
 const Article = require('../models/Article');
 
@@ -147,11 +148,57 @@ const update = async (req, res) => {
     }
 }
 
+const uploadImage = async (req, res) => {
+    //configurar multer
+
+    // Recibir el fichero de imagen por POST
+    if(!req.file && !req.files ){
+        return res.status(400).json({
+            status: 'error',
+            message: 'No se ha subido ninguna imagen'
+        });
+    }
+    //Nombre del archivo
+    let fileName = req.file.originalname;
+    //Extensión del archivo
+    let fileExtension = fileName.split("\."); //Dividir el nombre del archivo por el punto
+    let extension = fileExtension[fileExtension.length - 1]; //Obtener la última parte del array
+
+    //Comprobar la extensión del archivo
+    if(['png', 'jpg', 'jpeg', 'gif'].includes(extension)){
+        //Subir la imagen
+        return res.status(200).json({
+            status: 'success',
+            message: 'Imagen subida correctamente',
+            file: req.file,
+            extension: extension,
+            fileExtension: fileExtension
+        });
+    }else{
+         // Borrar el archivo
+        fs.unlink(req.file.path, (err) => {
+            if (err) {
+                return res.status(500).json({
+                    status: 'error',
+                    message: 'Error al borrar el archivo'
+                });
+            }
+            return res.status(400).json({
+                status: 'error',
+                message: 'La extensión del archivo no es válida'
+            });
+        });
+       
+    }
+
+
+}
 
 module.exports = {
     add,
     getAll,
     uno,
     borrar,
-    update
+    update,
+    uploadImage
 }
