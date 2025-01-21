@@ -39,3 +39,6 @@ dist
 
 #Credenciales DOTENV
 .env
+
+#images
+images/articles/*

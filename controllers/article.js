@@ -1,6 +1,7 @@
 const fs = require('fs');
 const { validaDatos } = require('../helpers/validar');
 const Article = require('../models/Article');
+const path = require('path');
 
 const add = async (req, res) => {
     // Recibir los datos por POST
@@ -166,14 +167,33 @@ const uploadImage = async (req, res) => {
 
     //Comprobar la extensión del archivo
     if(['png', 'jpg', 'jpeg', 'gif'].includes(extension)){
-        //Subir la imagen
-        return res.status(200).json({
-            status: 'success',
-            message: 'Imagen subida correctamente',
-            file: req.file,
-            extension: extension,
-            fileExtension: fileExtension
-        });
+        // Guardar en la base de datos
+        try {
+            // Crear el objeto a guardar
+            let article = await Article.update({
+               image: req.file.filename
+            }, {
+                where: { id: req.params.id },
+                returning: true,
+                plain: true
+            });
+
+            article = article[1]; // Obtener el artículo actualizado
+
+            // Devolver una respuesta
+            return res.status(200).json({
+                status: 'success',
+                article: article,
+                fileName: req.file,
+                message: 'El artículo se ha actualizado correctamente'
+            });
+        } catch (error) {
+            return res.status(400).json({
+                status: 'error',
+                message: 'El artículo no se ha actualizado',
+                error: error.message
+            });
+        }
     }else{
          // Borrar el archivo
         fs.unlink(req.file.path, (err) => {
@@ -194,11 +214,30 @@ const uploadImage = async (req, res) => {
 
 }
 
+const imagen = async (req, res) => {
+    let image = req.params.image;
+    let path = `./images/articles/${image}`;
+    fs.stat(path, (error,existe) => {
+        if (existe) {
+            return res.status(200).sendFile(path, {root : '.'});
+        }else{
+            return res.status(404).json({
+                status: 'error',
+                message: 'La imagen no existe',
+                existe: existe,
+                image,
+                path
+            });
+        }
+    });
+
+}
 module.exports = {
     add,
     getAll,
     uno,
     borrar,
     update,
-    uploadImage
+    uploadImage,
+    imagen
 }
